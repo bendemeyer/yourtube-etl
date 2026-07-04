@@ -7,12 +7,12 @@ import yt
 from models.channel import Channel
 
 
-def init_channel_by_url(channel_url):
+def init_channel_by_url(channel_url: str):
     handle = next(part for part in channel_url.split("/") if part.startswith("@"))
     init_channel_by_handle(handle)
 
 
-def init_channel_by_handle(channel_name, users):
+def init_channel_by_handle(channel_name: str, users: list[int]):
     channel_id = yt.get_channel_id_from_handle(channel_name)
     channel = yt.get_channel(channel_id)
     yourtube_api.add_channel(channel)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     parser.add_argument("host", help="The YourTube API host")
     parser.add_argument("--update", dest="update", nargs="*", help="Update existing channels. Specify one or more channels to update them. If no channels are explicitly specified, all channels will be updated.")
     parser.add_argument("--add", dest="add", nargs="+", help="Add new channels to the database. Specify one or more channels to add them.")
-    parser.add_argument("--users", dest="user", nargs="+", help="User IDs to associate with any newly added channels")
+    parser.add_argument("--users", type=int, dest="user", nargs="+", help="User IDs to associate with any newly added channels")
 
     args = parser.parse_args()
 
@@ -54,5 +54,6 @@ if __name__ == "__main__":
             update_channel(channel)
 
     if args.add:
+        users = args.users or []
         for handle in args.add:
-            init_channel_by_handle(handle, args.users)
+            init_channel_by_handle(handle, users)
