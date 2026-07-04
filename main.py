@@ -12,10 +12,13 @@ def init_channel_by_url(channel_url):
     init_channel_by_handle(handle)
 
 
-def init_channel_by_handle(channel_name):
+def init_channel_by_handle(channel_name, users):
     channel_id = yt.get_channel_id_from_handle(channel_name)
     channel = yt.get_channel(channel_id)
     yourtube_api.add_channel(channel)
+    for user in users:
+        yourtube_api.add_user_channel(user, channel)
+    yourtube_api.add_user_channel(channel, )
     for batch in yt.generate_video_batches_by_channel(channel):
         for video in batch:
             yourtube_api.add_video(video)
@@ -36,6 +39,7 @@ if __name__ == "__main__":
     parser.add_argument("host", help="The YourTube API host")
     parser.add_argument("--update", dest="update", nargs="*", help="Update existing channels. Specify one or more channels to update them. If no channels are explicitly specified, all channels will be updated.")
     parser.add_argument("--add", dest="add", nargs="+", help="Add new channels to the database. Specify one or more channels to add them.")
+    parser.add_argument("--users", dest="user", nargs="+", help="User IDs to associate with any newly added channels")
 
     args = parser.parse_args()
 
@@ -51,4 +55,4 @@ if __name__ == "__main__":
 
     if args.add:
         for handle in args.add:
-            init_channel_by_handle(handle)
+            init_channel_by_handle(handle, args.users)

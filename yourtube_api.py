@@ -13,6 +13,12 @@ def add_channel(channel: Channel):
     result = requests.put(f"{base_url}/channel/{channel.id}", channel.to_json())
     if result.status_code != 200:
         raise Exception(result.json()["error"])
+    
+def add_user_channel(user: int, channel: Channel):
+    print(f"Allowing channel {channel.handle} for user {user}")
+    result = requests.put(f"{base_url}/user/{user}/channel/{channel.id}")
+    if result.status_code != 200:
+        raise Exception(result.json()["error"])
 
 def add_video(video: Video):
     print(f"Adding video {video.id}: {video.title}")
